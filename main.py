@@ -1,16 +1,53 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from Perceptron import Perceptron
+from PerceptronParameters import PerceptronParameters
+from Vector import Vector
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    learning_vectors = [
+        Vector([0, 0], [0]),
+        Vector([0, 1], [0]),
+        Vector([0.001, 1.001], [0]),
+        Vector([0.001, 0.001], [0]),
+        Vector([-0.001, 1.001], [0]),
+        Vector([-0.001, 0.001], [0]),
+        Vector([0.001, 0.999], [0]),
+        Vector([0.001, -0.001], [0]),
+        Vector([1.001, 0.001], [0]),
+        Vector([1.001, 1.001], [1]),
+        Vector([0.999, 0.001], [0]),
+        Vector([0.999, 1.001], [1]),
+        Vector([1, 1.001], [1]),
+        Vector([1, 1.002], [1]),
+        Vector([0.999, 0.999], [1]),
+        Vector([1.002, 0.999], [1]),
+        Vector([1.002, 1], [1]),
+        Vector([0.999, 0.998], [1]),
+        Vector([0.999, 1.002], [1]),
+        Vector([1, 1.002], [1]),
+    ]
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    testing_vectors = [
+        Vector([1, 0], [0]),
+        Vector([1, 1], [1]),
+        Vector([-0.001, 0.999], [0]),
+        Vector([-0.001, -0.001], [0]),
+        Vector([0.999, 0], [0]),
+        Vector([0.999, 1], [1]),
+        Vector([1.002, 1], [1]),
+        Vector([0.999, 1.001], [1]),
+    ]
+
+    parameters = PerceptronParameters(
+        Perceptron.unipolar_function,
+        2,
+        1,
+        -0.5,
+        0.5,
+        0.1,
+        1
+    )
+
+    perceptron = Perceptron(parameters)
+    perceptron.learn(learning_vectors)
+    perceptron.test(testing_vectors)
