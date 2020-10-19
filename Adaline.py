@@ -1,9 +1,9 @@
-from PerceptronParameters import PerceptronParameters
+from AdalineParameters import AdalineParameters
 import random
 
 
-class Perceptron:
-    parameters = PerceptronParameters
+class Adaline:
+    parameters = AdalineParameters
     input_neurons = []
     output_neurons = []
     weights = [[]]  # [input_neuron][output_neuron]. input_neuron = 0 is a bias.
@@ -27,44 +27,55 @@ class Perceptron:
         learn = True
         epoch = 0
         while learn and epoch < 20000:
-            print(f'\nepoch: {epoch}')
-            # random.shuffle(learning_vectors)
-            are_errors = False
+            # print(f'\nepoch: {epoch}')
+            random.shuffle(learning_vectors)
+
+            # learning Adaline
             for vector in learning_vectors:
-                self.feedforward(vector)
+                self.feedforward_sum(vector)
                 for o in range(len(self.output_neurons)):
-                    cost = vector.y[o] - self.output_neurons[o]
-                    if cost != 0:
-                        are_errors = True
-                        if self.parameters.use_bias_instead_of_theta:
-                            self.weights[0][o] += self.parameters.learning_rate * cost  # bias
-                        for i in range(len(self.input_neurons)):
-                            # print(f'cost: {cost}')
-                            delta = cost * vector.x[i]
-                            self.weights[i + 1][o] += self.parameters.learning_rate * delta  # i + 1, because weights[0] are biases
+                    error_value = vector.y[o] - self.output_neurons[o]
+                    self.weights[0][o] += self.parameters.learning_rate * error_value  # bias
+                    for i in range(len(self.input_neurons)):
+                        # print(f'error_value: {error_value}')
+                        self.weights[i + 1][o] += self.parameters.learning_rate * error_value * vector.x[i]  # i + 1, because weights[0] are biases
+
+            # calculating mean square error
+            square_error_sum = 0
+            for vector in learning_vectors:
+                self.feedforward_sum(vector)
+                for o in range(len(self.output_neurons)):
+                    square_error_sum += (vector.y[o] - self.output_neurons[o]) ** 2
+            mean_square_error_value = square_error_sum / len(learning_vectors)
+
             epoch += 1
-            learn = are_errors
+            learn = mean_square_error_value > self.parameters.permissible_error_value
         print(f'\nNumber of epochs of learning: {epoch}')
 
         return epoch
 
     def feedforward(self, vector):
+        self.feedforward_sum(vector)
+        self.apply_activation_function_on_output_neurons()
+
+        return self.output_neurons
+
+    def feedforward_sum(self, vector):
         self.input_neurons = vector.x
         # self.clear_output_neurons()
 
         for o in range(len(self.output_neurons)):
-            z = 0
-            if self.parameters.use_bias_instead_of_theta:
-                z += self.weights[0][o]  # bias
+            z = self.weights[0][o]  # bias
             for i in range(len(self.input_neurons)):
                 # print(f'weights len: {len(self.weights)}')
                 # print(f'wegihts[i] len: {len(self.weights[i])}')
                 # print(f'i: {i}, o: {o}')
                 z += self.input_neurons[i] * self.weights[i + 1][o]  # i + 1, because weights[0] are biases
+            self.output_neurons[o] = z
 
-            self.output_neurons[o] = self.activation_function(z)
-
-        return self.output_neurons
+    def apply_activation_function_on_output_neurons(self):
+        for o in range(len(self.output_neurons)):
+            self.output_neurons[o] = self.activation_function(self.output_neurons[o])
 
     def test(self, testing_vectors):
         print('\n*** Testing ***\n')
@@ -79,16 +90,16 @@ class Perceptron:
         print(f'\nAccuracy: {good_classifications / len(testing_vectors) * 100}%')
 
     def activation_function(self, z):
-        return self.parameters.activation_function(z, self.parameters.theta_threshold)
+        return self.parameters.activation_function(z)
 
     @staticmethod
-    def unipolar_function(z, theta):
-        if z > theta:
+    def unipolar_function(z):
+        if z > 0:
             return 1
         return 0
 
     @staticmethod
-    def bipolar_function(z, theta):
-        if z > theta:
+    def bipolar_function(z):
+        if z > 0:
             return 1
         return -1
