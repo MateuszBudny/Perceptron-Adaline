@@ -104,6 +104,15 @@ def test_bipolar_adaline(parameters):
     return epochs
 
 
+def test_unipolar_adaline(parameters):
+    parameters.activation_function = Adaline.unipolar_function
+    adaline = Adaline(parameters)
+    epochs = adaline.learn(learning_vectors_unipolar)
+    adaline.test(testing_vectors_unipolar)
+
+    return epochs
+
+
 def test_multiple_times(test_function, times_num):
     print('*** Testing multiple times has been started ***')
     epochs_list = []
