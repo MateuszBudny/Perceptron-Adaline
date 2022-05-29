@@ -122,6 +122,7 @@ def check_perceptron_parameters(parameters):
 
 
 if __name__ == '__main__':
+    print('*** Showcase has been started ***')
     perceptron_parameters = PerceptronParameters(
         Perceptron.unipolar_function,
         2,
@@ -143,5 +144,8 @@ if __name__ == '__main__':
         10000
     )
 
-    test_multiple_times(lambda: test_bipolar_perceptron(perceptron_parameters), 10)
-    # test_multiple_times(lambda: test_bipolar_adaline(adaline_parameters), 10)
+    print('*** Testing unipolar simple perceptron ***')
+    test_multiple_times(lambda: test_unipolar_perceptron(perceptron_parameters), 3)
+    print('\n*** Testing bipolar adaline ***')
+    test_multiple_times(lambda: test_bipolar_adaline(adaline_parameters), 3)
+    print('*** Showcase has been ended ***')

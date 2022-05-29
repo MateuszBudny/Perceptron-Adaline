@@ -71,8 +71,10 @@ class Perceptron:
         good_classifications = 0
         for testing_vector in testing_vectors:
             y = self.feedforward(testing_vector)
-            # print(f'y: {y}')
-            # print(f'testing_vector.y: {testing_vector.y}')
+            print(f'arguments: {testing_vector.x}')
+            print(f'class: {testing_vector.y}')
+            print(f'classified to {y}')
+            print(f'is classification correct: {y == testing_vector.y}')
             if y == testing_vector.y:
                 good_classifications += 1
 
